@@ -1,5 +1,6 @@
 class User < ActiveRecord::Base
-  attr_accessible :enabled, :level, :name, :token, :uid
+  attr_accessible :enabled, :level, :name, :uid
+  attr_accessor :token
   has_many :flags
 
   serialize :user_cache, JSON

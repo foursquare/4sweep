@@ -4,6 +4,11 @@
 #   Ensure the SQLite 3 gem is defined in your Gemfile
 #   gem 'sqlite3'
 development:
+  adapter: "<%= ENV['DB_ADAPTER'] %>"
+  database: "<%= ENV['DB_DATABASE'] %>"
+  username: "<%= ENV['DB_USERNAME'] %>"
+  password: "<%= ENV['DB_PASSWORD'] %>"
+  host: "<%= ENV['DB_HOST'] %>"
 
 production:
   adapter: "<%= ENV['DB_ADAPTER'] %>"

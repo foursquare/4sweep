@@ -44,11 +44,11 @@ class ApplicationController < ActionController::Base
 
   private
     def require_user
-      if cookies[:access_token] == nil
+      if cookies.signed[:access_token] == nil
         redirect_to :controller => :session, :action => :new
         return false
       end
-      session[:access_token] = cookies[:access_token]
+      session[:access_token] = cookies.signed[:access_token]
       @current_user = current_user
       if @current_user.nil?
         redirect_to :controller => :session, :action => :new
@@ -58,16 +58,16 @@ class ApplicationController < ActionController::Base
     end
 
     def get_current_user
-      return nil if cookies[:access_token].blank?
+      return nil if cookies.signed[:access_token].blank?
 
       begin
-        foursquare = Foursquare2::Client.new(:oauth_token => cookies[:access_token], :connection_middleware => [Faraday::Response::Logger, FaradayMiddleware::Instrumentation], :api_version => api_version)
-        @current_user ||= User.find_by_token(cookies[:access_token])
+        foursquare = Foursquare2::Client.new(:oauth_token => cookies.signed[:access_token], :connection_middleware => [Faraday::Response::Logger, FaradayMiddleware::Instrumentation], :api_version => api_version)
         @current_user ||= User.find_by_uid(foursquare.user('self').id)
+        @current_user.token = cookies.signed[:access_token]
       rescue Foursquare2::APIError
-        cookies[:access_token] = nil
+        cookies.signed[:access_token] = nil
         session[:access_token] = nil
-        redirect_to :controller => :session, :action=>:new
+        redirect_to :controller => :session, :action => :new
       end
       @current_user
     end

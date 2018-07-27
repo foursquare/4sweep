@@ -22,7 +22,7 @@ by DelayedJob.
 Current Status
 --------------
 
-4sweep is unmaintained as of March 2015.
+4sweep was unmaintained as of March 2015, but in July of 2018, 4sweep was open sourced and has become primarily maintained by Foursquare. While Foursquare will make periodic security and maintenance updates, the 4sweep/Foursquare community is highly encouraged to fork and submit pull requests with new features.
 
 
 Explorer Features
@@ -48,9 +48,9 @@ Flag Features
 Configuration and setup
 -----------------------
 
-4sweep is currently built for Rails 3.2 and uses Bootstrap 2.0.  You will need
+4sweep is currently built for Rails 3.2 (Ruby 2.0.0) and uses Bootstrap 2.0.  You will need
 to install all required gems. It relies on a database supported by ActiveRecord,
-and has only been tested with MySQL 5.5.
+and has only been tested with MySQL 5.5/5.6.
 
 Additionally, you will need to install PEG.js, a JavaScript parser generator
 library.  The easiest way to do this is via npm:
@@ -68,29 +68,31 @@ PEG.js 0.8.0
 You only need PEG.js in your development environment. It is used as part of the
 Rails asset pipeline to generate a javascript parser.
 
-API credentials
+
+ENV Variable Storage
 ----
 
-4sweep needs you to specify a database in ``config/database.yml``.  
+4sweep now uses ENV variables to store sensitive config variables (like api keys, database credentials, etc). Feel free to use whatever method of storing these ENV variables works best for you, but if a `config/app_environment_variables.rb` file is present, it will be loaded. An example of what that file might look like (and the variables currently stored) can be found in the `config/app_environment_variables-example.rb` file.
 
-You will need to search globally for all instances of "REPLACE_ME".
-
-4sweep depends on several external services.  IN ``config/application.yml``,
-you will need to specify the following:
-
-```yaml
-development:
-  # Your Foursquare API keys:
-  app_id: ""
-  app_secret: ""
-  callback_url: ""
-
-  # Optional, to support the Rake task of generating and publishing map icons:
-  aws_key: ""
-  aws_secret: ""
-  s3_bucket: ""
-
-  # Optional, for Cloudwatch monitoring of 4sweep in production
-  cloudwatch_key: ""
-  cloudwatch_secret: ""
+Most recent variables used:
 ```
+ENV['APP_SECRET'] = 'REPLACE_ME'
+
+ENV['DB_ADAPTER'] = 'mysql2'
+ENV['DB_DATABASE'] = 'REPLACE_ME'
+ENV['DB_USERNAME'] = 'REPLACE_ME'
+ENV['DB_PASSWORD'] = 'REPLACE_ME'
+ENV['DB_HOST'] = 'localhost'
+
+ENV['FOURSQUARE_CLIENT_ID'] = 'REPLACE_ME'
+ENV['FOURSQUARE_CLIENT_SECRET'] = 'REPLACE_ME'
+ENV['OAUTH_CALLBACK'] = 'http://localhost:3000/session/callback'
+ENV['GOOGLE_MAPS_KEY'] = 'REPLACE_ME'
+ENV['AWS_KEY'] = 'REPLACE_ME'
+ENV['AWS_SECRET'] = 'REPLACE_ME'
+ENV['AWS_S3_BUCKET'] = 'REPLACE_ME'
+ENV['CLOUDWATCH_KEY'] = 'REPLACE_ME'
+ENV['CLOUDWATCH_SECRET'] = 'REPLACE_ME'
+ENV['ROLLBAR_ACCESS_TOKEN'] = 'REPLACE_ME'
+```
+

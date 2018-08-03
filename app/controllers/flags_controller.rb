@@ -143,7 +143,7 @@ class FlagsController < ApplicationController
       flag.user = @current_user
       flag.save!
       if params[:runimmediately] && params[:runimmediately] != 'false' or flag["scheduled_at"]
-        flag.queue_for_submit(@current_user.token, 5.minutes.from_now)
+        flag.queue_for_submit(@current_user.oauth_token, 5.minutes.from_now)
       end
       flags << flag
     end
@@ -155,7 +155,7 @@ class FlagsController < ApplicationController
 
   def run
     processflags do |flag|
-      flag.queue_for_submit(@current_user.token, Time.now)
+      flag.queue_for_submit(@current_user.oauth_token, Time.now)
     end
   end
 

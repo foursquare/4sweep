@@ -16,6 +16,7 @@ class SessionController < ApplicationController
       begin
         token  = oauth_client.auth_code.get_token(code, :redirect_uri => Settings.callback_url)
         cookies.permanent.signed[:access_token] = token.token
+        Rails.logger.debug "Cookie token set: #{cookies.signed[:access_token].inspect}"
       rescue OAuth2::Error => e
         flash[:notice] = "Login Failure: " + e.message
       end
@@ -33,6 +34,7 @@ class SessionController < ApplicationController
       # let's clear their user cache, it seems to be causing problems:
       @current_user.user_cache = nil
       @current_user.cached_at = nil
+      @current_user.token = nil if cookies.signed[:access_token].present?
       @current_user.save
     else
       @current_user = User.create(
@@ -54,7 +56,6 @@ class SessionController < ApplicationController
     end
 
     if @current_user
-      @current_user.access_token = cookies.signed[:access_token]
       redirect_to :controller => :explorer, :action => :explore
       return
     end

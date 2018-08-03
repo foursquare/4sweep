@@ -7,7 +7,7 @@ class ApplicationController < ActionController::Base
   def set_foursquare_user
     @current_user = get_current_user
     # make sure we always set the user's access token from the cookie, instead of db:
-    @current_user.access_token = cookies.signed[:access_token]
+    @current_user.access_token = cookies.signed[:access_token] if cookies.signed[:access_token].present?
     @current_user
   end
 
@@ -62,6 +62,8 @@ class ApplicationController < ActionController::Base
     def get_current_user
       return nil if cookies.signed[:access_token].blank?
 
+      Rails.logger.debug "\n\nCookie token found: #{cookies.signed[:access_token]} // Search for user.\n"
+
       begin
         foursquare = Foursquare2::Client.new(:oauth_token => cookies.signed[:access_token], :connection_middleware => [Faraday::Response::Logger, FaradayMiddleware::Instrumentation], :api_version => api_version)
         @current_user ||= User.find_by_uid(foursquare.user('self').id)
@@ -73,6 +75,9 @@ class ApplicationController < ActionController::Base
         cookies.signed[:access_token] = nil
         redirect_to :controller => :session, :action => :new
       end
+
+      Rails.logger.debug "User found? #{@current_user.inspect} // #{@current_user.oauth_token.inspect}"
+
       @current_user
     end
 

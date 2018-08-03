@@ -6,6 +6,9 @@ class ApplicationController < ActionController::Base
 
   def set_foursquare_user
     @current_user = get_current_user
+    # make sure we always set the user's access token from the cookie, instead of db:
+    @current_user.access_token = cookies.signed[:access_token]
+    @current_user
   end
 
   def api_version
@@ -48,7 +51,6 @@ class ApplicationController < ActionController::Base
         redirect_to :controller => :session, :action => :new
         return false
       end
-      session[:access_token] = cookies.signed[:access_token]
       @current_user = current_user
       if @current_user.nil?
         redirect_to :controller => :session, :action => :new
@@ -63,10 +65,12 @@ class ApplicationController < ActionController::Base
       begin
         foursquare = Foursquare2::Client.new(:oauth_token => cookies.signed[:access_token], :connection_middleware => [Faraday::Response::Logger, FaradayMiddleware::Instrumentation], :api_version => api_version)
         @current_user ||= User.find_by_uid(foursquare.user('self').id)
-        @current_user.token = cookies.signed[:access_token]
+        # ensure existing users that are logged in have the user's database stored token set in the cookie:
+        cookies.permanent.signed[:access_token] = @current_user.token if !cookies.signed[:access_token].present?
+        # set the user access token (so it uses that instead of the database stored):
+        @current_user.access_token = cookies.signed[:access_token]
       rescue Foursquare2::APIError
         cookies.signed[:access_token] = nil
-        session[:access_token] = nil
         redirect_to :controller => :session, :action => :new
       end
       @current_user

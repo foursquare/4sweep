@@ -3,7 +3,7 @@ class Flag < ActiveRecord::Base
   attr_accessible :created_at, :primaryName, :venueId,
                   :status, :type, :user, :problem,
                   :comment, :scheduled_at, :venues_details
-
+  attr_accessor :access_token
   serialize :venues_details, JSON
 
   validates_presence_of :venueId, :on => :create, :message => "can't be blank"
@@ -11,15 +11,20 @@ class Flag < ActiveRecord::Base
   validates_presence_of :user_id, :on => :create, :message => "can't be blank"
   HOME_CAT_ID = '4bf58dd8d48988d103941735';
 
+  def user_token
+    # TODO: remove the user.oauth_token and ONLY use self.access_token
+    @token ||= ( self.access_token.present? ) ? self.access_token : user.oauth_token
+  end
+
   def client
-    user.foursquare_client
+    @user_client ||= Foursquare2::Client.new(:oauth_token => user_token, :connection_middleware => [Faraday::Response::Logger, FaradayMiddleware::Instrumentation], :api_version => '20140825')
   end
 
   def userless_client
     @userless_client ||= Foursquare2::Client.new(:client_id => Settings.app_id, :client_secret => Settings.app_secret, :connection_middleware => [Faraday::Response::Logger, FaradayMiddleware::Instrumentation], :api_version => '20140825')
   end
 
-  def queue_for_submit(delayed_time = Time.now, queue = 'submit')
+  def queue_for_submit(token, delayed_time = Time.now, queue = 'submit')
     if self.job_id
       begin
         # Delete job if it is already present
@@ -55,15 +60,16 @@ class Flag < ActiveRecord::Base
       priority = 20
     end
 
-    job = Delayed::Job.enqueue(SubmitFlagJob.new(self), :priority => priority, :run_at =>delayed_time, :queue => queue)
+    job = Delayed::Job.enqueue(SubmitFlagJob.new(self, token), :priority => priority, :run_at => delayed_time, :queue => queue)
     self.job_id = job.id
     save
   end
 
-  def submit
+  def submit(delayed_token)
     if status == 'canceled' || status == 'resolved'
       return
     end
+    self.access_token = delayed_token
     begin
       result = submithelper
     rescue Foursquare2::APIError => e
@@ -177,6 +183,6 @@ class Flag < ActiveRecord::Base
   end
 
   def as_json(options = {})
-    super options.merge(:methods => [:friendly_name, :flag_type, :details])
+    super options.merge(:methods => [:friendly_name, :flag_type, :details, :user_token])
   end
 end

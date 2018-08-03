@@ -53,7 +53,11 @@ class SessionController < ApplicationController
       @current_user = User.find_by_uid(foursquare_user.id)
     end
 
-    redirect_to :controller => :explorer, :action => :explore if @current_user
+    if @current_user
+      @current_user.access_token = cookies.signed[:access_token]
+      redirect_to :controller => :explorer, :action => :explore
+      return
+    end
 
     @authorize_url = oauth_client.auth_code.authorize_url(:redirect_uri => Settings.callback_url)
   end
@@ -66,7 +70,6 @@ class SessionController < ApplicationController
 
   def logout
     cookies.signed[:access_token] = nil
-    session[:access_token] = nil
     redirect_to :action => :new
   end
 

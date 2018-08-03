@@ -100,7 +100,7 @@ class FlagsController < ApplicationController
   def resubmit
     processflags do |flag|
       flag.resolved_details = nil
-      flag.queue_for_submit(@current_user.token, Time.zone.now)
+      flag.queue_for_submit(@current_user.oauth_token, Time.zone.now)
       flag
     end
   end

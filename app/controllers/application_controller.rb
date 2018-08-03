@@ -65,8 +65,11 @@ class ApplicationController < ActionController::Base
       begin
         foursquare = Foursquare2::Client.new(:oauth_token => cookies.signed[:access_token], :connection_middleware => [Faraday::Response::Logger, FaradayMiddleware::Instrumentation], :api_version => api_version)
         @current_user ||= User.find_by_uid(foursquare.user('self').id)
+        # TODO: remove when reomving user.token
         # ensure existing users that are logged in have the user's database stored token set in the cookie:
-        cookies.permanent.signed[:access_token] = @current_user.token if !cookies.signed[:access_token].present?
+        if @current_user.token.present? && !cookies.signed[:access_token].present?
+          cookies.permanent.signed[:access_token] = @current_user.token
+        end
         # set the user access token (so it uses that instead of the database stored):
         @current_user.access_token = cookies.signed[:access_token]
       rescue Foursquare2::APIError

@@ -9,7 +9,7 @@
   <script type="text/javascript">
     var lat =  <%= @lat %>
     var lng =  <%= @lng %>
-    var token = '<%= cookies[:access_token] %>'
+    var token = '<%= cookies.signed[:access_token] %>'
     var sulevel = '<%= @current_user.level %>'
     var categories = <%=raw @categories %>
     var client_id = '<%= @client_id %>'

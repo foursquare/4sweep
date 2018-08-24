@@ -14,9 +14,8 @@ class SessionController < ApplicationController
     if code
       # set up new oauth2 client, get token
       begin
-
-      token  = oauth_client.auth_code.get_token(code, :redirect_uri => Settings.callback_url)
-      cookies.permanent[:access_token] = token.token
+        token  = oauth_client.auth_code.get_token(code, :redirect_uri => Settings.callback_url)
+        cookies.permanent.signed[:access_token] = token.token
       rescue OAuth2::Error => e
         flash[:notice] = "Login Failure: " + e.message
       end
@@ -24,13 +23,14 @@ class SessionController < ApplicationController
     end
 
     # Now that we have an access token, let's see if we have a user for this person:
-    foursquare = Foursquare2::Client.new(:oauth_token => cookies[:access_token], :connection_middleware => [Faraday::Response::Logger, FaradayMiddleware::Instrumentation], :api_version => '20140107')
+    foursquare = Foursquare2::Client.new(:oauth_token => cookies.signed[:access_token], :connection_middleware => [Faraday::Response::Logger, FaradayMiddleware::Instrumentation], :api_version => '20140107')
 
     foursquare_user = foursquare.user('self')
     user = User.find_by_uid(foursquare_user.id)
 
     if user
       @current_user = user
+      # TODO: token will be going byebye soon
       @current_user[:token] = cookies[:access_token]
       # let's clear their user cache, it seems to be causing problems:
       @current_user.user_cache = nil
@@ -40,7 +40,6 @@ class SessionController < ApplicationController
       @current_user = User.create(
          :uid => foursquare_user.id,
          :name => "#{foursquare_user.firstName} #{foursquare_user.lastName}".strip,
-         :token => cookies[:access_token],
          :enabled => true)
     end
 
@@ -48,8 +47,18 @@ class SessionController < ApplicationController
   end
 
   def new
-    @current_user ||= User.find_by_token(cookies[:access_token])
-    redirect_to :controller => :explorer, :action => :explore if @current_user
+    if !@current_user && cookies.signed[:access_token]
+      # Now that we have an access token, let's see if we have a user for this person:
+      foursquare = Foursquare2::Client.new(:oauth_token => cookies.signed[:access_token], :connection_middleware => [Faraday::Response::Logger, FaradayMiddleware::Instrumentation], :api_version => '20140107')
+
+      foursquare_user = foursquare.user('self')
+      @current_user = User.find_by_uid(foursquare_user.id)
+    end
+
+    if @current_user
+      redirect_to :controller => :explorer, :action => :explore
+      return
+    end
 
     @authorize_url = oauth_client.auth_code.authorize_url(:redirect_uri => Settings.callback_url)
   end
@@ -61,8 +70,7 @@ class SessionController < ApplicationController
   end
 
   def logout
-    cookies[:access_token] = nil
-    session[:access_token] = nil
+    cookies.signed[:access_token] = nil
     redirect_to :action => :new
   end
 

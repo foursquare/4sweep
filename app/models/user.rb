@@ -1,12 +1,19 @@
 class User < ActiveRecord::Base
-  attr_accessible :enabled, :level, :name, :token, :uid
+  # TODO: remove token
+  attr_accessible :enabled, :level, :name, :uid, :token
+  attr_accessor :access_token
   has_many :flags
 
   serialize :user_cache, JSON
   MAX_USER_AGE = 1.hour
 
+  def oauth_token
+    # TODO: remove the self.token and ONLY use self.access_token
+    @token ||= ( self.access_token.present? ) ? self.access_token : self.token
+  end
+
   def foursquare_client
-    foursquare ||= Foursquare2::Client.new(:oauth_token => token, :connection_middleware => [Faraday::Response::Logger, FaradayMiddleware::Instrumentation], :api_version => '20140825')
+    foursquare ||= Foursquare2::Client.new(:oauth_token => oauth_token, :connection_middleware => [Faraday::Response::Logger, FaradayMiddleware::Instrumentation], :api_version => '20140825')
   end
 
   def foursquare_user

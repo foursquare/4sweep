@@ -1,7 +1,7 @@
-class SubmitFlagJob < Struct.new(:flag)
+class SubmitFlagJob < Struct.new(:flag, :token)
 
   def perform
-    flag.submit
+    flag.submit(token)
   end
 
   def success(job)
@@ -36,7 +36,7 @@ class SubmitFlagJob < Struct.new(:flag)
         flags_of_type = flag.user.flags.where(:status => "queued").where("type NOT IN (?)", ["PhotoFlag", "TipFlag"]).count
         rate_limit = 5000
       end
-      # If this fails due to rate_limit_exceeded, figure out how long it will take to process all flags 
+      # If this fails due to rate_limit_exceeded, figure out how long it will take to process all flags
       # of this type and randomly assign a time in that window. It's hacky and brittle, but better than
       # every job retrying at the same time.
       # TODO: make this reschedule all likely to fail flags, not just this one

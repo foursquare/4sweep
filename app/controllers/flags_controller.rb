@@ -161,12 +161,14 @@ class FlagsController < ApplicationController
 
   def check
     processflags do |flag|
+      flag.access_token = @current_user.oauth_token
       flag.resolved?
     end
   end
 
   def cancel
     processflags do |flag|
+      flag.access_token = @current_user.oauth_token
       flag.cancel
     end
   end
@@ -197,6 +199,7 @@ class FlagsController < ApplicationController
     if params.has_key? :forcecheck
       response = @flags.each do |flag|
         tryflagaction(flag) do |c|
+          c.access_token = @current_user.oauth_token
           c.resolved?
         end
       end

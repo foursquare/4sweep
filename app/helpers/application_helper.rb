@@ -11,6 +11,6 @@ module ApplicationHelper
   end
 
   def release
-    "0.30.16"
+    "0.30.17"
   end
 end

@@ -91,7 +91,8 @@ class Flag < ActiveRecord::Base
     self.status = 'submitted'
     self.submitted_at = Time.now
     self.save
-    delay(:run_at => 20.seconds.from_now, :queue => 'check', :priority => (type == "PhotoFlag" ? 55 : 45)).resolved?
+    #delay(:run_at => 20.seconds.from_now, :queue => 'check', :priority => (type == "PhotoFlag" ? 55 : 45)).resolved?
+    Delayed::Job.enqueue(CheckFlagJob.new(self, delayed_token), :run_at => 20.seconds.from_now, :queue => 'check', :priority => (type == "PhotoFlag" ? 55 : 45))
 
     flag_json = "NO FLAGS"
     if result && result.flags

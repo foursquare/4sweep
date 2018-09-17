@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140705230607) do
+ActiveRecord::Schema.define(:version => 20180917213107) do
 
   create_table "categories_caches", :force => true do |t|
     t.text     "categories",    :limit => 16777215
@@ -75,7 +75,6 @@ ActiveRecord::Schema.define(:version => 20140705230607) do
   create_table "users", :force => true do |t|
     t.string   "name"
     t.string   "level"
-    t.string   "token"
     t.boolean  "enabled"
     t.datetime "created_at",                     :null => false
     t.datetime "updated_at",                     :null => false
@@ -85,7 +84,6 @@ ActiveRecord::Schema.define(:version => 20140705230607) do
     t.string   "hometown"
   end
 
-  add_index "users", ["token"], :name => "index_users_on_token"
   add_index "users", ["uid"], :name => "index_users_on_uid"
 
 end

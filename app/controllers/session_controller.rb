@@ -19,7 +19,6 @@ class SessionController < ApplicationController
       rescue OAuth2::Error => e
         flash[:notice] = "Login Failure: " + e.message
       end
-
     end
 
     # Now that we have an access token, let's see if we have a user for this person:
@@ -30,8 +29,6 @@ class SessionController < ApplicationController
 
     if user
       @current_user = user
-      # TODO: token will be going byebye soon
-      @current_user[:token] = cookies[:access_token]
       # let's clear their user cache, it seems to be causing problems:
       @current_user.user_cache = nil
       @current_user.cached_at = nil

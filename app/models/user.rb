@@ -1,6 +1,5 @@
 class User < ActiveRecord::Base
-  # TODO: remove token
-  attr_accessible :enabled, :level, :name, :uid, :token
+  attr_accessible :enabled, :level, :name, :uid
   attr_accessor :access_token
   has_many :flags
 
@@ -8,8 +7,7 @@ class User < ActiveRecord::Base
   MAX_USER_AGE = 1.hour
 
   def oauth_token
-    # TODO: remove the self.token and ONLY use self.access_token
-    @token ||= ( self.access_token.present? ) ? self.access_token : self.token
+    @token ||= self.access_token
   end
 
   def foursquare_client

@@ -38,7 +38,7 @@ class ApplicationController < ActionController::Base
     if error.message =~ /backend read error/
       logger.error "Backend read error!"
     end
-    redirect_to :controller=>:session, :action=>:error
+    redirect_to :controller=>:session, :action=>:error if !request.path.include?('session/error')
   end
 
   def foursquare_userless

@@ -22,9 +22,11 @@ class ApplicationController < ActionController::Base
   rescue_from Foursquare2::APIError do |error|
     if error.message =~ /invalid_auth/
       redirect_to :controller => :session, :action => :logout
+    elsif error.message =~ /rate_limit_exceeded/
+      logger.error "Auth token: #{@current_user.access_token}"
     end
     logger.error "Foursquare2::APIError: #{error.message}"
-    # redirect_to :controller=>:session, :action=>:error
+    redirect_to :controller => :session, :action => :error
     return
   end
 
@@ -38,7 +40,7 @@ class ApplicationController < ActionController::Base
     if error.message =~ /backend read error/
       logger.error "Backend read error!"
     end
-    redirect_to :controller=>:session, :action=>:error
+    redirect_to :controller => :session, :action => :error if !request.path.include?('session/error')
   end
 
   def foursquare_userless

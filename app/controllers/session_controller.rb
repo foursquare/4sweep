@@ -77,7 +77,7 @@ class SessionController < ApplicationController
   private
 
   def oauth_client
-   client = OAuth2::Client.new(
+    client = OAuth2::Client.new(
         Settings.app_id,
         Settings.app_secret,
         :authorize_url => "/oauth2/authorize",

@@ -60,6 +60,13 @@ Run this instead:
 $ gem install bundler -v=1.17.3
 ```
 
+If you are running your environment from Mac OS Mojave, run the following before you do a "bundle install".
+```shell
+$ brew install openssl
+$ brew install mysql@5.5
+$ gem install mysql2 -v '0.3.21' -- --with-ldflags=-L/usr/local/opt/openssl/lib --with-cppflags=-I/usr/local/opt/openssl/include
+```
+
 Additionally, you will need to install PEG.js, a JavaScript parser generator
 library.  The easiest way to do this is via npm:
 

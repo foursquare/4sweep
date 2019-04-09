@@ -52,6 +52,14 @@ Configuration and setup
 to install all required gems. It relies on a database supported by ActiveRecord,
 and has only been tested with MySQL 5.5/5.6.
 
+Note that Bundler doesn't support Ruby 2.0.0 anymore, but recommended so that you can run
+"bundle install" in the project directory to install the necessary Ruby gems.
+
+Run this instead:
+```shell
+$ gem install bundler -v=1.17.3
+```
+
 Additionally, you will need to install PEG.js, a JavaScript parser generator
 library.  The easiest way to do this is via npm:
 
@@ -95,4 +103,3 @@ ENV['CLOUDWATCH_KEY'] = 'REPLACE_ME'
 ENV['CLOUDWATCH_SECRET'] = 'REPLACE_ME'
 ENV['ROLLBAR_ACCESS_TOKEN'] = 'REPLACE_ME'
 ```
-

@@ -19,3 +19,6 @@ package-lock.json
 /config/app_environment_variables.rb
 vendor/.DS_Store
 vendor/bundle/
+
+# Ignore node_modules
+/node_modules

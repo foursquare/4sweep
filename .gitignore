@@ -22,3 +22,4 @@ vendor/bundle/
 
 # Ignore node_modules
 /node_modules
+package.json

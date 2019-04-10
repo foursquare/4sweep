@@ -17,8 +17,8 @@ ActiveRecord::Schema.define(:version => 20140705230607) do
     t.text     "categories",    :limit => 16777215
     t.datetime "created_at",                        :null => false
     t.datetime "updated_at",                        :null => false
-    t.string   "digest"
     t.datetime "last_verified"
+    t.string   "digest"
   end
 
   add_index "categories_caches", ["created_at"], :name => "index_categories_caches_on_created_at"

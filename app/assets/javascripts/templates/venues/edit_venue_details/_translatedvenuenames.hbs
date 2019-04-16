@@ -1,0 +1,16 @@
+<div>
+  <div class= "controls">
+    <ul id="list_translatedvenuenames">
+      <li>
+        <input type="text" name='' class='submittable' data-keyname='' placeholder='Language' style='width:100px;'>
+        <input type="text" name='' class='submittable' data-keyname='' placeholder='Name'  style='width:250px;'>
+      </li>
+      {{#each list_tvn}}
+      <li>
+        <input type="text" name='' class='submittable' data-keyname='' placeholder={{this.lang}} style='width:100px;'>
+        <input type="text" name='' class='submittable' data-keyname='' placeholder={{this.name}}  style='width:250px;'>
+      </li>
+      {{/each}}
+    </ul>
+  </div>
+</div>

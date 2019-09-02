@@ -12,8 +12,7 @@ class Flag < ActiveRecord::Base
   HOME_CAT_ID = '4bf58dd8d48988d103941735';
 
   def user_token
-    # TODO: remove the user.oauth_token and ONLY use self.access_token
-    @token ||= ( self.access_token.present? ) ? self.access_token : user.oauth_token
+    @token ||= self.access_token
   end
 
   def client

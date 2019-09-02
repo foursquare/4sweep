@@ -142,9 +142,11 @@ class ExportAction extends VenueActionPopover
 
   openInElio: () ->
     data = (id for own id, element of @explorer.selected)
-    @openGeneratedLink
-      target: "_blank"
-      href: "http://4sq.eliotools.site/load.php?venues=" + data.join(",")
+    chunkedData = (data.splice(0, 250) while data.length)
+    for d, i in chunkedData
+      @openGeneratedLink
+        target: "_blank"
+        href: "http://4sq.eliotools.site/load.php?venues=" + d.join(",")
 
   exportCSV: () ->
     header = [

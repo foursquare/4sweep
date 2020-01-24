@@ -7,7 +7,7 @@ class EditVenueFlag < Flag
 
   def self.streetCleanup(text)
     # This is just some normalization Foursquare does to
-    # addresses. This logic is brittle and non-i18n'ed, 
+    # addresses. This logic is brittle and non-i18n'ed,
     # needs more data to derive proper rules.
     text.gsub!(/\./,'')
     text.gsub!("Street", "St")
@@ -57,6 +57,11 @@ class EditVenueFlag < Flag
       :value_getter => lambda {|v,h| [v.location.crossStreet || ""]},
       :normalizer => lambda {|t| self.streetCleanup(t).strip}
     },
+    "neighborhood" => {
+      :friendly_name => "neighborhood",
+      :value_getter => lambda {|v,h| [v.location.neighborhood || ""]},
+      :normalizer => lambda {|t| t.strip}
+    },
     "city" => {
       :friendly_name => "City",
       :value_getter => lambda {|v,h| [v.location.city || ""]},
@@ -88,6 +93,14 @@ class EditVenueFlag < Flag
     "facebookUrl" => {
       :friendly_name => "Facebook",
       :value_getter => lambda {|v,h| [v.contact.facebook || "", v.contact.facebookUsername || ""]},
+      :normalizer => lambda {|t|
+        return "" if t.nil? or t.length == 0
+        return (t || " ").split('?').first.split('/').last.downcase
+      }
+    },
+    "instagram" => {
+      :friendly_name => "Instagram",
+      :value_getter => lambda {|v,h| [v.contact.instagram || ""]},
       :normalizer => lambda {|t|
         return "" if t.nil? or t.length == 0
         return (t || " ").split('?').first.split('/').last.downcase

@@ -24,6 +24,13 @@
 </div>
 
 <div class="control-group">
+  <label for="venuedetails_neighborhood" class="control-label">Neighborhood:</label>
+  <div class="controls">
+    <input type="text" name='venuedetails[neighborhood]' class='submittable venuedetails_neighborhood' data-keyname='neighborhood' value="{{venue.location.neighborhood}}">
+  </div>
+</div>
+
+<div class="control-group">
   <label for="venuedetails_city" class="control-label">City:</label>
   <div class="controls">
     <input type="text" name='venuedetails[city]' class='submittable venuedetails_city' data-keyname='city' value="{{venue.location.city}}">
@@ -68,6 +75,15 @@
     <div class="input-append">
       <input type="text" name='venuedetails[facebookUrl]' class='submittable venuedetails_facebook' data-keyname='facebookUrl' value="{{#if venue.contact.facebookUsername}}https://facebook.com/{{venue.contact.facebookUsername}}{{else}}{{#if venue.contact.facebook}}https://facebook.com/{{venue.contact.facebook}}{{/if}}{{/if}}">
       <a class="btn disabled btn-info tooltiptrigger facebook-link editpopoverexternal" title="Open Facebook page in new tab" href="#" target="_blank"><i class="icon-white icon-chevron-right"></i></a>
+    </div>
+  </div>
+</div>
+
+<div class="control-group">
+  <label for="venuedetails_instagram" class="control-label">Instagram:</label>
+  <div class="controls">
+    <div class="input-append">
+      <input type="text" name='venuedetails[instagram]' class='submittable venuedetails_instagram' data-keyname='instagram' value="{{venue.contact.instagram}}">
     </div>
   </div>
 </div>

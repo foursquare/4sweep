@@ -82,8 +82,10 @@
 <div class="control-group">
   <label for="venuedetails_instagram" class="control-label">Instagram:</label>
   <div class="controls">
-    <div class="input-append">
+    <div class="input-prepend input-append">
+      <span class="add-on">@</span>
       <input type="text" name='venuedetails[instagram]' class='submittable venuedetails_instagram' data-keyname='instagram' value="{{venue.contact.instagram}}">
+      <a class="btn disabled btn-info tooltiptrigger instagram-link editpopoverexternal" title="Open Instagram page in new tab" href="#" target="_blank"><i class="icon-white icon-chevron-right"></i></a>
     </div>
   </div>
 </div>

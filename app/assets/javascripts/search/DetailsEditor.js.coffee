@@ -17,6 +17,8 @@ class DetailsEditor
            .attr("href",  popover.find(".venuedetails_facebook").val().trim())
     popover.find(".facebook-link").toggleClass('disabled', popover.find(".venuedetails_facebook").val().trim().length == 0)
            .attr("href",  popover.find(".venuedetails_facebook").val().trim())
+    popover.find(".instagram-link").toggleClass('disabled', popover.find(".venuedetails_instagram").val().trim().length == 0)
+           .attr("href",  "https://instagram.com/#{encodeURIComponent(popover.find(".venuedetails_instagram").val().trim())}")
     popover.find(".googlesearch")
            .attr("href", "https://www.google.com/search?q=#{encodeURIComponent(popover.find(".venuedetails_name").val())}" +
                          "+#{encodeURIComponent(popover.find(".venuedetails_address").val())}" +

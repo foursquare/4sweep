@@ -32,6 +32,10 @@ Handlebars.registerHelper 'timeFromMongoId', (oid) ->
   timestamp = parseInt(oid.slice(0,8), 16)
   moment(timestamp * 1000).calendar() + " (" + moment(new Date(timestamp*1000)).fromNow() + ")"
 
+Handlebars.registerHelper 'timeFromCreatedAt', (createdAt) ->
+  timestamp = parseInt(createdAt)
+  moment(timestamp * 1000).calendar() + " (" + moment(new Date(timestamp*1000)).fromNow() + ")"
+
 Handlebars.registerHelper 'moment', (timeVal) ->
   time = if timeVal * 1000 then timeVal * 1000 else timeVal
   moment(time).calendar()

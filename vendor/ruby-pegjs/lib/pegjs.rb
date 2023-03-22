@@ -5,7 +5,7 @@ require 'pegjs/version'
 module Pegjs
   class << self
     def version
-      Version.from_string `pegjs --version`
+      Version.from_string `peggy --version`
     end
 
     def parse(grammar, opts = {})

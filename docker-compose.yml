@@ -1,0 +1,27 @@
+services:
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+  web:
+    image: registry.prod.factual.com/4sweep:latest
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    links:
+      - db
+    environment:
+      RAILS_ENV: development
+      DB_HOST: 4sweep-db-1
+      DB_USERNAME: root
+      DB_PASSWORD: root
+      DB_DATABASE: foursweep
+      OAUTH_CALLBACK: http://localhost:3000/session/callback
+      FOURSQUARE_CLIENT_ID:
+      FOURSQUARE_CLIENT_SECRET:
+      GOOGLE_MAPS_KEY:
+      APP_SECRET:

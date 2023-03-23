@@ -50,24 +50,32 @@ Configuration and setup
 
 Foursweep is currently built for Rails 5.2 (Ruby 2.7.0) and uses Bootstrap 2.0.  You will need
 to install all required gems. It relies on a database supported by ActiveRecord,
-and has only been tested with MySQL 5.5/5.6.
+and has only been tested with MySQL 5.5/5.6/5.7.
 
-Additionally, you will need to install peggy, a JavaScript parser generator
-library.  The easiest way to do this is via npm:
-
-```shell
-$ npm install -g peggy
-```
-After installing peggy, make sure that it is executable on your command line:
+The environment for 4sweep is built as a Docker image. For development purposes, you can build it yourself with
 
 ```shell
-$ peggy -v
-PEG.js 0.8.0
+./build_local.sh
 ```
 
-You only need peggy in your development environment. It is used as part of the
-Rails asset pipeline to generate a javascript parser.
+If you're not on a machine with native amd64 architecture, make sure this environment variable is set
+before building: `DOCKER_DEFAULT_PLATFORM=linux/amd64`
 
+Internally, 4sweep uses a JavaScript parser generator called `peggy`. This was formerly limited to
+the development environment, but we now install it by default.
+
+You can run the app locally using the script
+
+```shell
+./run_local.sh
+```
+
+This uses `docker-compose` under the hood. The configuration file, `docker-compose.yml`, is defined with some
+variables missing that are required; if you install the `1password-cli` (on a Mac, `brew install 1password-cli`)
+and you have access to the 4sweep vault, this will auto-populate the missing variables and start the app.
+
+If you do not have access to this app, you may populate these variables yourself; but take care not to commit
+them to github.
 
 ENV Variable Storage
 ----

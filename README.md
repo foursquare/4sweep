@@ -52,24 +52,30 @@ Foursweep is currently built for Rails 5.2 (Ruby 2.7.0) and uses Bootstrap 2.0. 
 to install all required gems. It relies on a database supported by ActiveRecord,
 and has only been tested with MySQL 5.5/5.6/5.7.
 
-The environment for 4sweep is built as a Docker image. For development purposes, you can build it
-yourself with the command
+The environment for 4sweep is built as a Docker image. For development purposes, you can build it yourself with
+
 ```shell
-docker build -t registry.prod.factual.com/4sweep:latest --build-arg artifactory_creds="${ARTIFACTORY_USERNAME}:${ARTIFACTORY_PASSWORD}" .
+./build_local.sh
 ```
+
 If you're not on a machine with native amd64 architecture, make sure this environment variable is set
 before building: `DOCKER_DEFAULT_PLATFORM=linux/amd64`
 
 Internally, 4sweep uses a JavaScript parser generator called `peggy`. This was formerly limited to
 the development environment, but we now install it by default.
 
-You can run the app locally using `docker-compose`; a configuration file, `docker-compose.yml`, is
-included which will manage the app and its database. Some required environment variables in this file
-have empty values; they should be set by the user to the appropriate values before starting the app with
+You can run the app locally using the script
 
 ```shell
-docker-compose up
+./run_local.sh
 ```
+
+This uses `docker-compose` under the hood. The configuration file, `docker-compose.yml`, is defined with some
+variables missing that are required; if you install the `1password-cli` (on a Mac, `brew install 1password-cli`)
+and you have access to the 4sweep vault, this will auto-populate the missing variables and start the app.
+
+If you do not have access to this app, you may populate these variables yourself; but take care not to commit
+them to github.
 
 ENV Variable Storage
 ----

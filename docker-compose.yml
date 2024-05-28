@@ -7,7 +7,7 @@ services:
     ports:
       - "3306:3306"
   web:
-    image: 087473112489.dkr.ecr.us-west-1.amazonaws.com/4sweep:latest
+    image: 087473112489.dkr.ecr.us-east-1.amazonaws.com/4sweep:latest
     ports:
       - "3000:3000"
     depends_on:

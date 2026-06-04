@@ -78,7 +78,9 @@ class ApplicationController < ActionController::Base
         end
         # set the user access token (so it uses that instead of the database stored):
         @current_user.access_token = cookies.signed[:access_token]
-      rescue Foursquare2::APIError
+      rescue Foursquare2::APIError => error
+        logger.error "Foursquare2::Client error"
+        logger.error "Foursquare2::APIError: #{error.message}"
         cookies.signed[:access_token] = nil
         redirect_to :controller => :session, :action => :new
       end

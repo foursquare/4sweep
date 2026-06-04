@@ -1,14 +1,12 @@
 class LocationManager
   constructor: (@map, @lastSearchLocation) ->
-    # Set up listeners
-    # Set up map elements and listeners on them
     @setupDrawing();
     unless @lastSearchLocation instanceof GlobalLocation
       @lastFiniteLocation = @lastSearchLocation
     @lastBoundedLocation = @lastSearchLocation if @lastSearchLocation.bounded
 
   setupDrawing: () ->
-    @setupDrawingModes()
+    @setupControls()
     @globalControl = new GlobalControl();
     @radiusControl = new RadiusDropdown()
     @nearControl = new NearButton()
@@ -28,7 +26,6 @@ class LocationManager
 
     @globalControl.elem.children('div').on 'click', (e) =>
       @globalControl.select()
-      @drawingManager.setDrawingMode(null)
       @processLocationDraw(new GlobalLocation())
       @nearControl.close()
 
@@ -38,62 +35,8 @@ class LocationManager
       @processLocationDraw(new CenterRadiusSearchLocation(event.latLng, radius), circle)
       @globalControl.reset()
 
-  setupDrawingModes: (options = []) ->
-    @drawingManager?.setMap(null)
+  setupControls: (options = []) ->
     @map.controls[google.maps.ControlPosition.TOP_LEFT].clear()
-    drawingModes = []
-    drawingModes.push google.maps.drawing.OverlayType.RECTANGLE if "box" in options
-    drawingModes.push google.maps.drawing.OverlayType.CIRCLE if "circle" in options
-    drawingModes.push google.maps.drawing.OverlayType.POLYGON if "polygon" in options
-
-    @drawingManager = new google.maps.drawing.DrawingManager
-      map: @map
-      drawingMode: null
-      drawingControlOptions:
-        drawingModes: drawingModes
-      drawingControl: true
-      rectangleOptions:
-        strokeWeight: 1
-        editable: false
-        fillOpacity: 0.2
-        strokeOpacity: 0.2
-        fillColor: "#FFFF00"
-        zIndex: 1
-        clickable: false
-      circleOptions:
-        fillOpacity: 0.05
-        editable: false
-        clickable: false
-        strokeWeight: 1
-        fillColor: "#FFFF00"
-
-    google.maps.event.addListener @drawingManager, "drawingmode_changed", (e) =>
-      @globalControl.reset()
-      @nearControl.close()
-      # if @drawingManager.drawingMode == 'rectangle'
-      #   @radiusControl.elem.hide()
-      # else
-      #   @radiusControl.elem.show()
-
-    if "box" in options
-      google.maps.event.addListener @drawingManager, 'rectanglecomplete', (rectangle) =>
-        boxLocation = new BoundingBoxSearchLocation(rectangle.getBounds().getNorthEast(), rectangle.getBounds().getSouthWest())
-        @radiusControl.addTempRadius(boxLocation.radius())
-        @processLocationDraw(boxLocation, rectangle)
-        @nearControl.close()
-
-    if "circle" in options
-      google.maps.event.addListener @drawingManager, 'circlecomplete', (circle) =>
-        radius = circle.getRadius()
-        @radiusControl.addTempRadius(radius)
-        @processLocationDraw(new CenterRadiusSearchLocation(circle.getCenter(), circle.getRadius()), circle)
-        @nearControl.close()
-      @map.controls[google.maps.ControlPosition.TOP_LEFT].push(@radiusControl.control())
-
-    if "polygon" in options
-      google.maps.event.addListener @drawingManager, 'polygoncomplete', (polygon) =>
-        @processLocationDraw(new PolygonSearchLocation(polygon.getPath().getArray()), polygon)
-        @nearControl.close()
 
     if "global" in options
       @map.controls[google.maps.ControlPosition.TOP_LEFT].push(@globalControl.control())
@@ -104,7 +47,6 @@ class LocationManager
   setGlobal: () ->
     @lastSearchLocation = new GlobalLocation()
     @globalControl.select()
-    @drawingManager.setDrawingMode(null)
 
   processLocationDraw: (location, shape = undefined) ->
     @lastSearchLocation.clear()
@@ -141,10 +83,9 @@ class LocationManager
       clearFunction()
 
   showControls: (actions) ->
-    @setupDrawingModes(actions)
+    @setupControls(actions)
 
   location: (finiteOnly) ->
-    # This is the location currently selected on the map
     if finiteOnly then @lastFiniteLocation else @lastSearchLocation
 
   setActiveTab: (@activeTab) ->

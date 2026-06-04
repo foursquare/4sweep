@@ -85,6 +85,7 @@ class SessionController < ApplicationController
         Settings.app_secret,
         :authorize_url => "/oauth2/authorize",
         :token_url => "/oauth2/access_token",
+        :logger => Logger.new('log/oauth2.log', 'weekly'),
         :site => 'https://foursquare.com')
   end
 

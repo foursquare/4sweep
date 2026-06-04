@@ -73,8 +73,12 @@ class Flag < ActiveRecord::Base
     begin
       result = submithelper
     rescue Foursquare2::APIError => e
-      if e.message =~ /not_authorized/
-        self.update_attribute('status', 'not_authorized')
+      case e.type
+      when 'not_authorized', 'invalid_auth'
+        self.update_attributes(status: 'failed', resolved_details: e.message)
+        return
+      when 'param_error'
+        self.update_attributes(status: 'failed', resolved_details: e.message)
         return
       end
       if e.message =~ /has been deleted/
